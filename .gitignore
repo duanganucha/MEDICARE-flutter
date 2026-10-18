@@ -39,3 +39,4 @@ ios/Flutter/flutter_export_environment.sh
 macos/Pods/
 macos/Flutter/GeneratedPluginRegistrant.swift
 macos/Flutter/ephemeral/
+.venv-play/

@@ -11,7 +11,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 KEY_ID="6ZFTG727H4"
 ISSUER_ID="69a6de87-937a-47e3-e053-5b8c7c11a4d1"
-APP_ID="${MEDICARE_APP_ID:-}"          # export MEDICARE_APP_ID=... once known
+APP_ID="${MEDICARE_APP_ID:-6824204699}"   # App Store Connect app id
 IPA="$ROOT/build/ios/ipa/MEDICARE.ipa"
 
 BUILD_NUMBER="${1:-$(grep '^version:' "$ROOT/pubspec.yaml" | grep -o '+.*' | tr -d '+')}"
