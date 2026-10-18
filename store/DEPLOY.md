@@ -42,7 +42,7 @@ SHA-256: D6:8C:4C:15:61:9D:CC:81:A9:B1:B0:45:6A:1C:D3:E5:BB:C9:A1:72:53:E9:0A:82
 
 ```sh
 # สร้าง repo บน github.com ก่อน แล้ว:
-git remote add origin https://github.com/<USER>/<REPO>.git
+git remote add origin https://github.com/duanganucha/MEDICARE-flutter.git
 git branch -M main
 git push -u origin main
 ```
@@ -52,13 +52,13 @@ git push -u origin main
 
 รอสักครู่ จะได้ลิงก์นโยบาย:
 ```
-https://<USER>.github.io/<REPO>/privacy.html
+https://duanganucha.github.io/MEDICARE-flutter/privacy.html
 ```
 เก็บลิงก์นี้ไว้ ต้องกรอกทั้งสองสโตร์
 
 ### ถ้าอยากให้เปิดตัวแอปบนเว็บได้ด้วย
 ```sh
-flutter build web --release --base-href /<REPO>/
+flutter build web --release --base-href /MEDICARE-flutter/
 # แล้ว copy build/web/* ไปไว้ใน docs/ หรือใช้ branch gh-pages
 ```
 

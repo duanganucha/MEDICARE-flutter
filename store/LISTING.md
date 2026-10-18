@@ -72,11 +72,11 @@ MEDICARE เป็นเครื่องมือช่วยคำนวณ�
 ## URL ที่ต้องกรอก
 | ช่อง | ค่า |
 |---|---|
-| Privacy Policy | `https://<USER>.github.io/<REPO>/privacy.html` |
-| Support URL | `https://github.com/<USER>/<REPO>/issues` |
-| Marketing URL (ถ้ามี) | `https://<USER>.github.io/<REPO>/` |
+| Privacy Policy | `https://duanganucha.github.io/MEDICARE-flutter/privacy.html` |
+| Support URL | `https://github.com/duanganucha/MEDICARE-flutter/issues` |
+| Marketing URL (ถ้ามี) | `https://duanganucha.github.io/MEDICARE-flutter/` |
 
-> แทน `<USER>` และ `<REPO>` ด้วยชื่อจริงหลัง push ขึ้น GitHub
+> แทน `duanganucha` และ `MEDICARE-flutter` ด้วยชื่อจริงหลัง push ขึ้น GitHub
 
 ## อีเมลติดต่อ
 ```

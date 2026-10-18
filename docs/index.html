@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MEDICARE — เครื่องมือช่วยคำนวณขนาดยา</title>
+<meta name="description" content="เครื่องมือช่วยคำนวณขนาดยา NOACs และวัณโรค สำหรับเภสัชกร">
+<style>
+:root{--bg:#f7f3fb;--card:#fff;--ink:#241b33;--mut:#6b6480;--line:#e3dcf2;
+--pri:#3b2a52;--accent:#f08a6b;--plum:#2e2140}
+@media(prefers-color-scheme:dark){:root{--bg:#140e1f;--card:#1c1429;--ink:#ede7f5;
+--mut:#a99cc0;--line:#3a2d4f;--pri:#c9aef5}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.7;
+font-family:"IBM Plex Sans Thai","Noto Sans Thai",system-ui,-apple-system,sans-serif}
+.hero{background:linear-gradient(135deg,#3b2a52,#2e2140);color:#f6f1fa;
+padding:56px 20px 64px;text-align:center}
+.mark{width:84px;height:84px;border-radius:24px;background:var(--accent);margin:0 auto 20px;
+display:grid;place-items:center;color:#2e2140;font-size:52px;font-weight:700;line-height:1}
+h1{font-size:2rem;letter-spacing:4px;margin:0;font-weight:600}
+.tag{color:#c9bcdc;margin:8px 0 0;font-size:1rem}
+main{max-width:720px;margin:auto;padding:0 20px 64px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;
+padding:22px;margin:26px 0}
+h2{font-size:1.15rem;color:var(--pri);margin:0 0 10px}
+ul{padding-left:22px;margin:8px 0}li{margin:6px 0}
+.warn{background:#fdf0dc;color:#241b33;border:1px solid #9a5a00;border-left-width:5px;
+border-radius:12px;padding:14px 16px;margin:26px 0;font-size:.94rem}
+.warn b{color:#9a5a00}
+a{color:var(--pri)}
+footer{text-align:center;color:var(--mut);font-size:.86rem;padding:0 20px 40px}
+.links{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.links a{background:rgba(255,255,255,.14);color:#f6f1fa;text-decoration:none;
+padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.22);font-size:.92rem}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="mark">+</div>
+  <h1>MEDICARE</h1>
+  <p class="tag">เครื่องมือช่วยคำนวณขนาดยาสำหรับเภสัชกร</p>
+  <div class="links">
+    <a href="privacy.html">นโยบายความเป็นส่วนตัว</a>
+    <a href="privacy-en.html">Privacy (EN)</a>
+    <a href="https://github.com/duanganucha/MEDICARE-flutter">ซอร์สโค้ด</a>
+  </div>
+</div>
+
+<main>
+<div class="warn">
+  <b>ต้นแบบสำหรับทดสอบ — ห้ามใช้สั่งยาหรือปรับยาจริง</b><br>
+  แสดงขนาดยาตามตารางอ้างอิงเพื่อประกอบการพิจารณา ต้องตรวจสอบกับฉลากยา
+  แนวทางล่าสุด และบริบทผู้ป่วยก่อนใช้เสมอ
+</div>
+
+<div class="card">
+<h2>ยาต้านการแข็งตัวของเลือด NOACs (ผู้ป่วย AF)</h2>
+<ul>
+  <li>คำนวณ CrCl ด้วยสูตร Cockcroft–Gault</li>
+  <li>เปรียบเทียบ apixaban, rivaroxaban, edoxaban และ dabigatran พร้อมกัน</li>
+  <li>แสดงเหตุผลกำกับทุกขนาดยา ว่าเข้าเกณฑ์ลดขนาดข้อใด</li>
+  <li>อ้างอิง 2021 EHRA Practical Guide</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>ยาวัณโรค</h2>
+<ul>
+  <li>ผู้ใหญ่: คำนวณ HRZE ตามน้ำหนัก พร้อมเลือกจำนวนเม็ดจากความแรงที่มีในคลัง</li>
+  <li>เด็ก: ขนาดตาม mg/kg และปริมาตร isoniazid syrup</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>ความเป็นส่วนตัว</h2>
+<p>ทำงานออฟไลน์ 100% ไม่เก็บข้อมูลผู้ป่วย ไม่ส่งข้อมูลออกนอกเครื่อง
+ไม่มีโฆษณาและไม่มี tracker — อ่านรายละเอียดที่
+<a href="privacy.html">นโยบายความเป็นส่วนตัว</a></p>
+</div>
+</main>
+
+<footer>กลุ่มงานเภสัชกรรม โรงพยาบาลศรีสะเกษ</footer>
+</body>
+</html>
