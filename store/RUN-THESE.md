@@ -8,10 +8,17 @@
 
 ## ⚠ ก่อนอื่น: สำรอง keystore
 
-```sh
-cp android/upload-keystore.jks android/key.properties ~/Desktop/MEDICARE-keystore-backup/
+สำเนาเก็บไว้ที่:
 ```
-เก็บโฟลเดอร์นี้ไว้ที่ปลอดภัยอย่างน้อย 2 ที่ **ถ้าหายจะอัปเดตแอปบน Play ไม่ได้อีกเลย**
+~/Documents/PrivateKeyStore/medicare/
+```
+(ที่เดียวกับ key ของโปรเจกต์อื่น — hin-korat, payroll)
+
+⚠️ **ยังอยู่บนเครื่องนี้เครื่องเดียว** ควรก๊อปไปที่อื่นอีกอย่างน้อย 1 ที่
+(Google Drive ส่วนตัว / USB) เพราะ **ถ้าหายจะอัปเดตแอปบน Play ไม่ได้อีกตลอดไป**
+ต้องสร้างแอปใหม่ เปลี่ยน package name และผู้ใช้เดิมอัปเดตไม่ได้
+
+ตัวที่ build ใช้อยู่ที่ `android/upload-keystore.jks` (gitignore ไว้แล้ว ไม่ขึ้น GitHub)
 
 ---
 
