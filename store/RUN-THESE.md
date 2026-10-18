@@ -127,3 +127,21 @@ version: 1.0.1+2     # +2 ต้องเพิ่มทุกครั้งท
 flutter build appbundle --release   # Play
 flutter build ipa --release         # App Store
 ```
+
+---
+
+## อัปรูปหน้าร้าน Play (ต้องทำเองในเบราว์เซอร์)
+
+ข้อความหน้าร้านกรอกไว้ให้แล้ว (บันทึกเป็น draft) เหลือแค่รูป
+เพราะปุ่ม "Add assets" เปิด native file picker ที่สคริปต์ควบคุมไม่ได้
+และ API ปฏิเสธการ commit หน้าร้านของแอปที่ยังไม่เคย publish (403 ทุกครั้ง)
+
+เปิด: Grow users → Store presence → Store listings → Default store listing
+
+| ช่อง | ไฟล์ |
+|---|---|
+| App icon | `store/assets/icon-512-play.png` |
+| Feature graphic | `store/assets/feature-1024x500.png` |
+| Phone screenshots | `store/assets/screenshots/` ทั้ง 5 ไฟล์ |
+
+ลากไฟล์วางในกรอบ หรือกด "Add assets" แล้วเลือกไฟล์ → Save
