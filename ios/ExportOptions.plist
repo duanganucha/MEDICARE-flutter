@@ -6,12 +6,19 @@
 	<string>app-store-connect</string>
 	<key>teamID</key>
 	<string>97WC2DUVD3</string>
+	<!-- Manual signing: Xcode cannot reach Apple from here, so the profile
+	     created through the API is named explicitly. -->
 	<key>signingStyle</key>
-	<string>automatic</string>
+	<string>manual</string>
+	<key>provisioningProfiles</key>
+	<dict>
+		<key>th.go.sskhospital.medicare</key>
+		<string>MEDICARE AppStore</string>
+	</dict>
+	<key>signingCertificate</key>
+	<string>Apple Distribution</string>
 	<key>uploadSymbols</key>
 	<true/>
-	<key>destination</key>
-	<string>export</string>
 	<key>manageAppVersionAndBuildNumber</key>
 	<false/>
 </dict>
