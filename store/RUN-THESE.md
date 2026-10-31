@@ -153,10 +153,27 @@ flutter build ipa --release         # App Store
 
 ลากไฟล์วางในกรอบ หรือกด "Add assets" แล้วเลือกไฟล์ → Save
 
-## Play Store — เสร็จครบแล้ว (31 ต.ค. 2026)
+## Play Store — ส่งรีวิวแล้ว (31 ต.ค. 2026)
 
-ทั้ง store listing และ declaration ทั้ง 10 ข้อทำเสร็จผ่าน Play Console แล้ว
-หน้า App content ขึ้น "You're all caught up"
+หน้า Publishing overview ขึ้น **"Changes in review"** — ส่ง 11 changes
+ให้ Google รีวิวแล้ว (ปกติไม่เกิน 7 วัน) อนุมัติแล้วจะขึ้น Play อัตโนมัติ
+แบบ full rollout 100% ใน 178 ประเทศ
+
+### ขั้นตอนที่ต้องทำก่อนปุ่ม "Submit for review" จะกดได้
+
+ทำ declaration ครบ 10 ข้อแล้วปุ่มยัง**กดไม่ได้** เพราะ Play ซ่อนเงื่อนไข
+ไว้ในหน้า dashboard ต้องครบทั้งหมดนี้ก่อน:
+
+| ขั้น | ที่อยู่ |
+|---|---|
+| App category = Medical | Grow users → Store presence → Store settings |
+| Contact email + website | หน้าเดียวกัน (**กดแล้ว publish ทันที** ไม่เข้าคิวรีวิว) |
+| Store listing → Review → **AI asset declaration** | Store listings → Edit → Next |
+| **เลือกประเทศ** (ตอนแรกเป็น 0) | Production → Countries / regions → เลือกทั้งหมด = 178 |
+| Preview and confirm release | Production → Releases → Edit release → Next → Save |
+
+**AI asset declaration** ตอบ "Don't label assets" — screenshot ถ่ายจากแอปจริง
+ไอคอน/feature graphic วาดด้วยโค้ด Dart/Canvas ไม่ได้ generate จาก image AI
 
 ### เรื่อง API: service account แก้ store listing ไม่ได้
 
