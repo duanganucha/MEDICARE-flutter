@@ -153,29 +153,63 @@ flutter build ipa --release         # App Store
 
 ลากไฟล์วางในกรอบ หรือกด "Add assets" แล้วเลือกไฟล์ → Save
 
-## Play store listing — ยังติด permission (ตรวจเมื่อ 31 ต.ค. 2026)
+## Play Store — เสร็จครบแล้ว (31 ต.ค. 2026)
+
+ทั้ง store listing และ declaration ทั้ง 10 ข้อทำเสร็จผ่าน Play Console แล้ว
+หน้า App content ขึ้น "You're all caught up"
+
+### เรื่อง API: service account แก้ store listing ไม่ได้
 
 `scripts/play-listing.py` อัปข้อความ + รูปทั้ง 7 ภาพผ่าน API ได้สำเร็จทุกไฟล์
 แต่ `edits.commit()` ตอบ 403 PERMISSION_DENIED
 
-สิ่งที่ทดสอบแล้ว (เพื่อไม่ต้องลองซ้ำ):
+ทดสอบแยกแล้ว (เพื่อไม่ต้องลองซ้ำ):
 
 | ทดสอบ | ผล |
 |---|---|
-| `images().upload()` ทั้ง 7 ไฟล์ | ✅ สำเร็จ (ได้ sha1 กลับมาทุกไฟล์) |
-| `listings().update()` | ✅ สำเร็จ |
-| `commit()` แบบ edit ว่าง | ✅ สำเร็จ |
+| `images().upload()` ทั้ง 7 ไฟล์ | ✅ ได้ sha1 กลับมาทุกไฟล์ |
+| `listings().update()` | ✅ |
+| `commit()` แบบ edit **ว่าง** | ✅ |
 | `commit()` ที่แก้ description | ❌ 403 |
 | `commit()` ที่มีรูป | ❌ 403 |
-| `validate()` | ❌ 403 |
 
-**สรุป:** service account `play-uploader@hin-korat.iam.gserviceaccount.com`
-อัปโหลด AAB ได้ แต่ไม่มีสิทธิ์แก้ store listing
-API ไม่บอกรายละเอียดมากกว่า "The caller does not have permission"
+**สรุป:** `play-uploader@hin-korat.iam.gserviceaccount.com` อัป AAB ได้
+แต่ไม่มีสิทธิ์ **Manage store presence** → commit ที่แก้ listing จริงถูกปฏิเสธ
+(commit ที่ไม่เปลี่ยนอะไรเลยผ่าน — อย่าเอาไปตีความว่ามีสิทธิ์)
 
-**ทางแก้:** Play Console → Users and permissions → service account ด้านบน
-→ ติ๊ก **"Manage store presence"** (App permissions ของ MEDICARE)
-แล้วรัน `.venv-play/bin/python scripts/play-listing.py` ซ้ำ
+ถ้าจะใช้ API แก้ listing ในอนาคต: Play Console → Users and permissions
+→ ติ๊ก **Manage store presence** แล้วรัน `.venv-play/bin/python scripts/play-listing.py`
 
-ถ้าไม่อยากให้สิทธิ์ service account เพิ่ม — อัปมือในคอนโซลได้
-ไฟล์อยู่ใน `store/assets/` (icon 512, feature 1024x500, screenshot 5 ภาพ)
+### หมายเหตุสำคัญ 2 ข้อ
+
+1. **รหัสภาษาคือ `th` ไม่ใช่ `th-TH`** — ใช้ `th-TH` จะได้ 400
+   "The requested language is not currently supported"
+
+2. **อัปรูปผ่าน browser ได้** แม้ปุ่ม "Add assets" จะเปิด native file picker
+   วิธี: patch `HTMLInputElement.prototype.click` ให้ไม่เปิด dialog สำหรับ
+   `type=file` → กดปุ่ม → input ถูกสร้างใน DOM → ยัดไฟล์เข้า input โดยตรง
+   (Play จะ deduplicate กับรูปที่เคยอัปผ่าน API ให้เอง)
+
+### คำตอบ declaration ที่ใช้ไป
+
+| หัวข้อ | คำตอบ |
+|---|---|
+| Privacy policy | https://duanganucha.github.io/MEDICARE-flutter/privacy.html |
+| Ads | No |
+| Sign in details | No (ไม่มี login/payment) |
+| Content rating | All ages (IARC, All Other App Types) |
+| Target audience | 18 and over |
+| Data safety | ไม่เก็บ ไม่แชร์ข้อมูล |
+| Advertising ID | No |
+| Government apps | No |
+| Financial features | ไม่มี |
+| Health apps | Medication and treatment management |
+
+อ้างอิงที่ตรวจจริงก่อนตอบ: dependency มีแค่ `cupertino_icons`,
+ไม่มี ad/analytics SDK, และ **ไม่มี uses-permission เลยสักตัว**
+ใน AndroidManifest.xml
+
+### package ID
+
+`th.go.sskhospital.medicare` — **เปลี่ยนไม่ได้** เพราะมี versionCode 1, 2
+อัปขึ้น Play แล้ว การเปลี่ยนชื่อ = ต้องสร้างแอปใหม่และทำทุกอย่างใหม่หมด
