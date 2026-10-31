@@ -152,3 +152,30 @@ flutter build ipa --release         # App Store
 | Phone screenshots | `store/assets/screenshots/` ทั้ง 5 ไฟล์ |
 
 ลากไฟล์วางในกรอบ หรือกด "Add assets" แล้วเลือกไฟล์ → Save
+
+## Play store listing — ยังติด permission (ตรวจเมื่อ 31 ต.ค. 2026)
+
+`scripts/play-listing.py` อัปข้อความ + รูปทั้ง 7 ภาพผ่าน API ได้สำเร็จทุกไฟล์
+แต่ `edits.commit()` ตอบ 403 PERMISSION_DENIED
+
+สิ่งที่ทดสอบแล้ว (เพื่อไม่ต้องลองซ้ำ):
+
+| ทดสอบ | ผล |
+|---|---|
+| `images().upload()` ทั้ง 7 ไฟล์ | ✅ สำเร็จ (ได้ sha1 กลับมาทุกไฟล์) |
+| `listings().update()` | ✅ สำเร็จ |
+| `commit()` แบบ edit ว่าง | ✅ สำเร็จ |
+| `commit()` ที่แก้ description | ❌ 403 |
+| `commit()` ที่มีรูป | ❌ 403 |
+| `validate()` | ❌ 403 |
+
+**สรุป:** service account `play-uploader@hin-korat.iam.gserviceaccount.com`
+อัปโหลด AAB ได้ แต่ไม่มีสิทธิ์แก้ store listing
+API ไม่บอกรายละเอียดมากกว่า "The caller does not have permission"
+
+**ทางแก้:** Play Console → Users and permissions → service account ด้านบน
+→ ติ๊ก **"Manage store presence"** (App permissions ของ MEDICARE)
+แล้วรัน `.venv-play/bin/python scripts/play-listing.py` ซ้ำ
+
+ถ้าไม่อยากให้สิทธิ์ service account เพิ่ม — อัปมือในคอนโซลได้
+ไฟล์อยู่ใน `store/assets/` (icon 512, feature 1024x500, screenshot 5 ภาพ)
