@@ -85,6 +85,13 @@ r = requests.post(f"{A}/betaAppReviewSubmissions", headers=H, json={"data": {
 if r.status_code in (200, 201):
     print("TestFlight:", r.json()["data"]["attributes"]["betaReviewState"])
 else:
-    sys.exit(f"ERROR {r.status_code}: {r.text[:300]}")
+    # Only external TestFlight testing needs this, and it wants extra
+    # metadata (beta description, feedback email) that an App Store
+    # release does not. The build is uploaded and usable either way, so
+    # warn instead of failing the whole release.
+    print(f"WARNING: TestFlight external review not submitted "
+          f"({r.status_code}). The build is uploaded and can still be "
+          f"attached to an App Store version.")
+    print(f"  {r.text[:300]}")
 PYEOF
 echo "Done."

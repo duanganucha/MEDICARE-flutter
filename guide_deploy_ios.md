@@ -379,6 +379,30 @@ ERROR ITMS-4236: The bundle version must be higher than...
 
 > Build number ซ้ำไม่ได้ **แม้จะลบ build เดิมทิ้งแล้ว**
 
+> 🪤 **กับดัก: log ปนกันระหว่าง altool หลายตัว — อย่าเพิ่งเชื่อว่า upload fail**
+>
+> ถ้ารันสคริปต์ค้างไว้แล้วรันซ้ำ (หรือตัวเก่าไม่ตายจริง) altool หลายตัว
+> จะเขียนลง log ไฟล์เดียวกัน **สลับบรรทัดกันมั่ว** บรรทัดเดียวอาจมี
+> timestamp สองช่วงเวลาติดกัน แบบนี้:
+> ```
+> Running altool at path2026-11-03 19:54:42 ERROR: ... 2026-11-03 19:56:13 ERROR: ...
+> ```
+> ตอนทำ MEDICARE อ่าน error `bundle version must be higher` ของตัวที่ตายแล้ว
+> นึกว่า upload พัง **ทั้งที่จริง upload สำเร็จ** บรรทัดจริงอยู่ล่างๆ ว่า
+> `UPLOAD SUCCEEDED with no errors`
+>
+> **ตรวจให้ชัวร์ด้วย API อย่าตัดสินจาก log:**
+> ```python
+> requests.get("https://api.appstoreconnect.apple.com/v1/builds",
+>     params={"filter[app]": APP_ID, "limit": 50,
+>             "fields[builds]": "version,uploadedDate,processingState"},
+>     headers=H, timeout=30)
+> ```
+> ถ้าเห็น build เลขใหม่ `VALID` = ขึ้นแล้ว จบ
+>
+> **และอย่ารัน `nohup ... &` ซ้อนใน background task** — ตัว wrapper จบทันที
+> รายงาน exit 0 ส่วนสคริปต์จริงตายตามไปด้วย ให้รันสคริปต์ตรงๆ เป็น task เลย
+
 ### 8.4 Build ค้างไม่เข้า TestFlight
 
 **สาเหตุ:** ยังไม่ตอบคำถาม export compliance
@@ -450,11 +474,54 @@ curl -sS -o /dev/null -w "%{http_code}\n" -L -A "Mozilla/5.0" "<url>"
 > ```
 > ตอนทำ MEDICARE เจอว่าแนวทาง WHO TB เป็นปี **2022** ไม่ใช่ 2021
 
-**แก้แล้วทำอะไรต่อ:**
+**แก้แล้วทำอะไรต่อ:** (ลำดับนี้สำคัญ — ทำผิดลำดับปุ่ม resubmit จะกดไม่ได้)
+
 1. เพิ่ม build number (`1.0.0+2` → `1.0.0+3`)
-2. build + upload ใหม่
-3. หน้า App Review → ตอบกลับใน **Resolution Center** อธิบายว่าแก้อะไร
-4. กด **Resubmit to App Review**
+2. build + upload ใหม่ รอจน build ขึ้นเป็น `VALID`
+3. **สลับ build ในหน้า version ก่อน** ← ขั้นที่คนลืมบ่อยที่สุด
+   หน้า *Distribution → iOS App 1.0* จะยัง**ผูกอยู่กับ build เก่าที่โดน reject**
+   - เลื่อนไปหัวข้อ **Build** → เอาเมาส์ **hover** ที่แถว build
+     (ปุ่มลบสีแดง ⊖ โผล่เฉพาะตอน hover — ไม่ hover จะไม่เห็นอะไรเลย)
+   - กด ⊖ ลบ build เก่า → ปุ่ม **Add Build** โผล่ขึ้นมา
+   - เลือก build ใหม่ → **Done** → **Save**
+   - ตรวจว่า sidebar เปลี่ยนจาก 🔴 *Rejected* เป็น 🟡 *Prepare for Submission*
+4. เขียนคำอธิบายใน **App Review Information → Notes** ของหน้า version
+   (ไม่ใช่ Resolution Center — ดูกล่องด้านล่าง) แล้ว **Save**
+5. กด **Update Review** → ระบบพาไปหน้า submission
+   สถานะ item เปลี่ยนเป็น *Ready for Review* และปุ่ม
+   **Resubmit to App Review** จะเปลี่ยนจากสีเทาเป็นสีฟ้า
+6. กด **Resubmit to App Review** → header เปลี่ยนเป็น *Waiting for Review*
+
+> ⚠️ **ตอบที่ไหน: Notes ไม่ใช่ Resolution Center**
+> ลิงก์ *Reply to App Review* ในหน้า submission มีไว้**ถาม/ชี้แจงระหว่างรอ**
+> ไม่ใช่ช่องทางส่งของกลับ การ resubmit จริงไปกับ
+> **App Review Information → Notes** ของ version
+> เขียนแบบ **เติมข้างบนของเดิม** อย่าลบวิธีทดสอบที่เคยเขียนไว้ —
+> reviewer ยังต้องใช้ (จำกัด 4000 ตัวอักษร ตัวเลขใต้ช่องคือ**จำนวนที่เหลือ**
+> ไม่ใช่จำนวนที่ใช้ไป)
+>
+> เนื้อหาที่ควรมีใน Notes:
+> - บอกตรงๆ ว่า build ก่อนโดน reject เพราะอะไร build ใหม่แก้อะไร
+> - **คัดลอกรายการอ้างอิงพร้อม URL มาแปะให้ครบ** reviewer จะได้ไม่ต้องหาเอง
+> - บอก**ตำแหน่ง**ที่จะเห็น (เช่น "อยู่ใต้ผลลัพธ์ เลื่อนลงล่างสุด")
+
+> 📌 **submission ID เดิมถูกใช้ซ้ำ** ไม่ได้สร้าง submission ใหม่
+> ดังนั้นข้อความ reject เดิมของ Apple จะยังค้างอยู่ในหน้านั้นหลัง resubmit — ปกติ
+
+**ตรวจผลด้วย API ไม่ใช่ดูแค่ UI:**
+
+```python
+r = requests.get(
+    "https://api.appstoreconnect.apple.com/v1/apps/<APP_ID>/appStoreVersions",
+    params={"limit": 3}, headers=H, timeout=30)
+# PREPARE_FOR_SUBMISSION → ยังไม่ส่ง
+# WAITING_FOR_REVIEW     → ส่งสำเร็จแล้ว
+```
+
+> ⚠️ endpoint `/appStoreVersions/<id>/build` กับ `appStoreReviewDetail`
+> **ค้างหรือตอบ 500 บ่อย** อย่าเอามาเป็นตัวตัดสิน ใช้ `appStoreState` พอ
+> และใส่ `timeout=` เสมอ ไม่งั้นสคริปต์ค้างยาว
+> (macOS ไม่มีคำสั่ง `timeout` ให้ใช้ — ต้องใส่ใน requests เอง)
 
 ### 8.7 Icon มี alpha channel
 
