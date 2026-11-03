@@ -79,7 +79,25 @@ class _TbPageState extends State<TbPage> {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [if (_adultMode) _adultCard() else _childCard()],
+      children: [
+        if (_adultMode) _adultCard() else _childCard(),
+        const Citations(
+          children: [
+            CitationLink(
+              text: 'WHO consolidated guidelines on tuberculosis. Module 4: '
+                  'treatment — drug-susceptible tuberculosis treatment. '
+                  'World Health Organization, 2022.',
+              url: 'https://www.who.int/publications/i/item/9789240048126',
+            ),
+            CitationLink(
+              text: 'WHO operational handbook on tuberculosis. Module 4: '
+                  'treatment — drug-susceptible tuberculosis treatment. '
+                  'World Health Organization, 2022.',
+              url: 'https://www.who.int/publications/i/item/9789240050761',
+            ),
+          ],
+        ),
+      ],
     );
   }
 

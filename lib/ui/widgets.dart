@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../logic/noac.dart';
 import 'motion.dart';
@@ -336,6 +337,94 @@ class UnitLabel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(text, style: TextStyle(color: context.dose.muted, fontSize: 14)),
+        ],
+      ),
+    );
+  }
+}
+
+/// One tappable source behind the numbers on a page.
+///
+/// App Review guideline 1.4.1 asks medical apps to cite the source of every
+/// calculation and to make the citation easy to find, so these sit directly
+/// under the results rather than behind an "about" screen.
+class CitationLink extends StatelessWidget {
+  const CitationLink({super.key, required this.text, required this.url});
+
+  /// The reference as it should read — title, body and year.
+  final String text;
+
+  /// A stable public page for that reference.
+  final String url;
+
+  Future<void> _open(BuildContext context) async {
+    final uri = Uri.parse(url);
+    final opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!opened && context.mounted) {
+      // No browser took the link: show the address so it can still be read.
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(url)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dose = context.dose;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: InkWell(
+        onTap: () => _open(context),
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 2, right: 8),
+                child: Icon(Icons.open_in_new, size: 15, color: dose.accent),
+              ),
+              Expanded(
+                child: Text(
+                  text,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    height: 1.45,
+                    color: dose.accent,
+                    decoration: TextDecoration.underline,
+                    decorationColor: dose.accent.withValues(alpha: .5),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// The "sources" block that closes a calculator page.
+class Citations extends StatelessWidget {
+  const Citations({super.key, required this.children});
+
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardTitle('แหล่งอ้างอิง'),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(
+              'ขนาดยาที่แสดงคำนวณตามแนวทางด้านล่าง '
+              'แตะเพื่อเปิดเอกสารต้นฉบับ',
+              style: TextStyle(fontSize: 13, color: context.dose.muted),
+            ),
+          ),
+          ...children,
         ],
       ),
     );

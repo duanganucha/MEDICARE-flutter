@@ -120,6 +120,29 @@ sed -i '' 's/IPHONEOS_DEPLOYMENT_TARGET = 13.0;/IPHONEOS_DEPLOYMENT_TARGET = 15.
 cd ios && rm -rf Pods Podfile.lock && pod install && cd ..
 ```
 
+> ⚠️ **แก้ 2 ที่ยังไม่พอ** — ทุกครั้งที่ `flutter pub add` แพ็กเกจที่มีโค้ด
+> iOS (เช่น `url_launcher`) pod ตัวใหม่จะกลับไปใช้ **13.0** ตาม default ของ
+> Flutter แล้ว build พังอีก
+>
+> ปักหมุดใน `ios/Podfile` ให้จบ:
+>
+> ```ruby
+> post_install do |installer|
+>   installer.pods_project.targets.each do |target|
+>     flutter_additional_ios_build_settings(target)
+>     target.build_configurations.each do |config|
+>       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
+>     end
+>   end
+> end
+> ```
+>
+> ตรวจว่าได้ผล:
+> ```sh
+> grep -c "IPHONEOS_DEPLOYMENT_TARGET = 13.0" ios/Pods/Pods.xcodeproj/project.pbxproj
+> # ต้องได้ 0
+> ```
+
 ### 3.3 เวอร์ชัน
 
 ```yaml
@@ -380,7 +403,60 @@ curl -sS -o /dev/null -w "%{http_code}\n" https://yourname.github.io/yourrepo/pr
 # ต้องได้ 200
 ```
 
-### 8.6 Icon มี alpha channel
+### 8.6 ถูก reject — Guideline 1.4.1 Safety: Physical Harm
+
+> 🚨 **แอปการแพทย์โดนข้อนี้บ่อยที่สุด** — MEDICARE โดนจริงในรอบแรก
+
+**ข้อความจาก Apple:**
+
+> The app includes medical information but does not include citations for the
+> medical information. Specifically, the app provides health or medical
+> calculations in the app without citations, such as links to sources for this
+> information. All apps with medical and health information should include
+> citations to ensure users are provided accurate information.
+>
+> **Next Steps:** Include citations in the app of the sources of the
+> recommendations or information, such as **links to those sources**. The
+> citations should be easy for the user to find.
+
+**สิ่งที่ Apple ต้องการ (ตีความจากข้อความ):**
+
+| ไม่พอ | ผ่าน |
+|---|---|
+| เขียนชื่อแนวทางเป็น**ข้อความเฉยๆ** | **ลิงก์กดได้**ไปเอกสารต้นฉบับ |
+| ซ่อนไว้ในหน้า About | อยู่**ใกล้ผลลัพธ์** หาเจอง่าย |
+| ใส่แค่หน้าเดียว | **ทุกหน้า**ที่มีการคำนวณ |
+
+**วิธีแก้ที่ใช้จริง** — ใส่ `url_launcher` แล้วทำ widget ลิงก์ไว้ท้ายทุกหน้าคำนวณ
+(ดู `CitationLink` / `Citations` ใน [`lib/ui/widgets.dart`](lib/ui/widgets.dart))
+
+**เลือก URL ที่เชื่อถือได้และ bot เปิดได้:**
+
+```sh
+# ตรวจก่อนใส่ในแอปเสมอ
+curl -sS -o /dev/null -w "%{http_code}\n" -L -A "Mozilla/5.0" "<url>"
+```
+
+| แหล่ง | ใช้ได้ไหม |
+|---|---|
+| `pubmed.ncbi.nlm.nih.gov/<PMID>/` | ✅ เสถียรที่สุด |
+| `who.int/publications/i/item/<ISBN>` | ✅ |
+| `doi.org/...` | ⚠️ มัก redirect ไปสำนักพิมพ์ที่ตอบ 403 |
+| `academic.oup.com` | ❌ 403 กับ bot |
+
+> 💡 **ตรวจชื่อเรื่อง/ปี กับ NCBI ก่อนเขียนลงแอป** อย่าพิมพ์จากความจำ:
+> ```sh
+> curl -sS "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=33895845&retmode=json"
+> ```
+> ตอนทำ MEDICARE เจอว่าแนวทาง WHO TB เป็นปี **2022** ไม่ใช่ 2021
+
+**แก้แล้วทำอะไรต่อ:**
+1. เพิ่ม build number (`1.0.0+2` → `1.0.0+3`)
+2. build + upload ใหม่
+3. หน้า App Review → ตอบกลับใน **Resolution Center** อธิบายว่าแก้อะไร
+4. กด **Resubmit to App Review**
+
+### 8.7 Icon มี alpha channel
 
 ```
 ERROR ITMS-90717: Invalid App Store Icon

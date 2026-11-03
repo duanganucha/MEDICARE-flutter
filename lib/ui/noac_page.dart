@@ -243,16 +243,21 @@ class _NoacPageState extends State<NoacPage> {
           ),
         ),
         if (_assessment != null) _results(_assessment!),
-        Padding(
-          padding: const EdgeInsets.only(top: 14, bottom: 4),
-          child: Center(
-            child: Text(
-              'อ้างอิง: 2021 EHRA Practical Guide on the Use of NOACs '
-              'in Patients with AF',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: dose.muted, fontSize: 14),
+        const Citations(
+          children: [
+            CitationLink(
+              text: '2021 European Heart Rhythm Association Practical Guide '
+                  'on the Use of Non-Vitamin K Antagonist Oral Anticoagulants '
+                  'in Patients with Atrial Fibrillation. Europace. '
+                  '2021;23(10):1612–1676.',
+              url: 'https://pubmed.ncbi.nlm.nih.gov/33895845/',
             ),
-          ),
+            CitationLink(
+              text: 'Cockcroft DW, Gault MH. Prediction of creatinine '
+                  'clearance from serum creatinine. Nephron. 1976;16(1):31–41.',
+              url: 'https://pubmed.ncbi.nlm.nih.gov/1244564/',
+            ),
+          ],
         ),
       ],
     );
