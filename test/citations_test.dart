@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medicare/ui/noac_page.dart';
 import 'package:medicare/ui/tb_page.dart';
@@ -100,5 +101,37 @@ void main() {
         expect(size.width, greaterThan(100));
       }
     }
+  });
+
+  testWidgets('tapping a citation asks the platform to open its url',
+      (tester) async {
+    // url_launcher goes through a platform channel that no-ops in tests, so
+    // record the call instead: a tap must reach launchUrl with the right url.
+    final calls = <String>[];
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel,
+        (call) async {
+      if (call.method == 'launch' || call.method == 'canLaunch') {
+        calls.add(call.arguments['url'] as String);
+      }
+      return true;
+    });
+    addTearDown(() => tester.binding.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null));
+
+    // A tall viewport, because the citations sit below a full input form and
+    // tap() refuses a target that is off-screen.
+    tester.view.physicalSize = const Size(1080, 6000);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.reset);
+
+    await pumpPage(tester, const NoacPage());
+    await tester.ensureVisible(find.byType(CitationLink).first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(CitationLink).first);
+    await tester.pumpAndSettle();
+
+    expect(calls, isNotEmpty, reason: 'tap did not reach url_launcher');
+    expect(calls.first, 'https://pubmed.ncbi.nlm.nih.gov/33895845/');
   });
 }
