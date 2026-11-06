@@ -430,3 +430,52 @@ class Citations extends StatelessWidget {
     );
   }
 }
+
+/// Explains, in the build that omits doses, why the numbers are missing.
+///
+/// Shown in place of the dose output when [showDoses] is false, so the page
+/// does not simply look broken. See `lib/features.dart` for the reason.
+class DosesUnavailableNote extends StatelessWidget {
+  const DosesUnavailableNote({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final c = context.dose;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(14, 13, 14, 13),
+      decoration: BoxDecoration(
+        color: c.soft,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.line),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.menu_book_outlined, size: 18, color: c.muted),
+              const SizedBox(width: 7),
+              Expanded(
+                child: Text(
+                  'เวอร์ชันนี้แสดงเกณฑ์อ้างอิง ไม่ได้ระบุขนาดยา',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'ด้านล่างเป็นเกณฑ์ตามแนวทางที่อ้างอิงไว้ท้ายหน้า '
+            'เพื่อให้ผู้ประกอบวิชาชีพนำไปพิจารณาร่วมกับฉลากยา '
+            'และบริบทของผู้ป่วยเอง',
+            style: TextStyle(fontSize: 13, height: 1.5, color: c.muted),
+          ),
+        ],
+      ),
+    );
+  }
+}

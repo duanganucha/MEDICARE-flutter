@@ -182,3 +182,40 @@ ChildRegimen childRegimen({required double weight}) {
     bottlesPerDay: syrupMl / 60,
   );
 }
+
+/// One row of the published mg/kg reference, with no patient in it.
+///
+/// This is the guidance as written — what the guideline says for a weight
+/// band — not a dose worked out for the person on screen. The build that
+/// omits dose calculation shows these rows in place of the regimen.
+class ReferenceRow {
+  const ReferenceRow({
+    required this.name,
+    required this.perKg,
+    required this.maxMg,
+  });
+
+  final String name;
+
+  /// Milligrams per kilogram of body weight, as published.
+  final double perKg;
+
+  /// The usual maximum daily dose in milligrams.
+  final double maxMg;
+}
+
+/// Adult HRZE reference values (≥15 years).
+const adultReference = [
+  ReferenceRow(name: 'Isoniazid (H)', perKg: 5, maxMg: 300),
+  ReferenceRow(name: 'Rifampicin (R)', perKg: 10, maxMg: 600),
+  ReferenceRow(name: 'Pyrazinamide (Z)', perKg: 25, maxMg: 2000),
+  ReferenceRow(name: 'Ethambutol (E)', perKg: 20, maxMg: 1200),
+];
+
+/// Paediatric HRZE reference values (<15 years).
+const childReference = [
+  ReferenceRow(name: 'Isoniazid (H)', perKg: 10, maxMg: 300),
+  ReferenceRow(name: 'Rifampicin (R)', perKg: 15, maxMg: 600),
+  ReferenceRow(name: 'Pyrazinamide (Z)', perKg: 35, maxMg: 2000),
+  ReferenceRow(name: 'Ethambutol (E)', perKg: 20, maxMg: 1200),
+];

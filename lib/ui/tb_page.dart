@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../features.dart';
 import '../logic/tb.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -80,7 +81,12 @@ class _TbPageState extends State<TbPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (_adultMode) _adultCard() else _childCard(),
+        if (!showDoses)
+          _referenceCard()
+        else if (_adultMode)
+          _adultCard()
+        else
+          _childCard(),
         const Citations(
           children: [
             CitationLink(
@@ -98,6 +104,88 @@ class _TbPageState extends State<TbPage> {
           ],
         ),
       ],
+    );
+  }
+
+  /// The published mg/kg reference, shown when this build omits doses.
+  ///
+  /// There is no weight field here on purpose: entering a weight and getting
+  /// milligrams back is the dose calculation this build leaves out. These are
+  /// the guideline's own numbers, which the reader applies themselves.
+  Widget _referenceCard() {
+    final c = context.dose;
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const CardTitle('เกณฑ์ขนาดยาวัณโรคตามแนวทาง WHO'),
+          const SizedBox(height: 4),
+          const DosesUnavailableNote(),
+          const SizedBox(height: 14),
+          _referenceTable('ผู้ใหญ่ (อายุ ≥ 15 ปี)', adultReference, c),
+          const SizedBox(height: 16),
+          _referenceTable('เด็ก (อายุ < 15 ปี)', childReference, c),
+          const SizedBox(height: 14),
+          Text(
+            'ระยะเข้มข้น HRZE 2 เดือน ตามด้วย HR 4 เดือน '
+            'สำหรับวัณโรคปอดที่ไวต่อยา',
+            style: TextStyle(fontSize: 13, height: 1.6, color: c.muted),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _referenceTable(String title, List<ReferenceRow> rows, DoseColors c) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        Table(
+          columnWidths: const {
+            0: FlexColumnWidth(2.4),
+            1: FlexColumnWidth(1.5),
+            2: FlexColumnWidth(1.5),
+          },
+          children: [
+            TableRow(
+              decoration: BoxDecoration(color: c.soft),
+              children: [
+                _cell('ยา', c, header: true),
+                _cell('มก./กก./วัน', c, header: true),
+                _cell('สูงสุด/วัน', c, header: true),
+              ],
+            ),
+            for (final r in rows)
+              TableRow(
+                children: [
+                  _cell(r.name, c),
+                  _cell(_trim(r.perKg), c),
+                  _cell('${_trim(r.maxMg)} มก.', c),
+                ],
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _cell(String text, DoseColors c, {bool header = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 13,
+          height: 1.4,
+          color: header ? null : c.muted,
+          fontWeight: header ? FontWeight.w600 : FontWeight.w400,
+        ),
+      ),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../features.dart';
 import '../logic/noac.dart';
 import 'motion.dart';
 import 'theme.dart';
@@ -272,7 +273,11 @@ class _NoacPageState extends State<NoacPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CardTitle('ผลการประเมินและเปรียบเทียบขนาดยา'),
+            CardTitle(
+              showDoses
+                  ? 'ผลการประเมินและเปรียบเทียบขนาดยา'
+                  : 'ผลการประเมินการทำงานของไต',
+            ),
             StatBox(
               label: 'ค่า CrCl (Cockcroft–Gault)',
               crCl: a.crCl,
@@ -282,6 +287,10 @@ class _NoacPageState extends State<NoacPage> {
               const SizedBox(height: 10),
               WarningBanner(body: a.thresholdNote!),
             ],
+            if (!showDoses) ...[
+              const SizedBox(height: 10),
+              const DosesUnavailableNote(),
+            ],
             for (final (i, r) in a.results.indexed)
               FadeSlideIn(
                 // Each card trails the one above it.
@@ -290,10 +299,14 @@ class _NoacPageState extends State<NoacPage> {
                   name: r.name,
                   // Below the 15 mL/min threshold the guideline gives no
                   // dose, so the headline is dropped and only the
-                  // explanation remains.
-                  dose: a.belowThreshold ? '' : r.dose,
+                  // explanation remains. A build without doses drops it
+                  // for the same reason: the criteria stay, the number
+                  // for this patient does not.
+                  dose: (a.belowThreshold || !showDoses) ? '' : r.dose,
                   reason: r.reason,
-                  reasonLabel: a.belowThreshold ? '' : 'เหตุผล: ',
+                  reasonLabel: (a.belowThreshold || !showDoses)
+                      ? ''
+                      : 'เหตุผล: ',
                   flag: r.flag,
                 ),
               ),
